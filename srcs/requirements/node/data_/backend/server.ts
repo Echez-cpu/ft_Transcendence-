@@ -1,8 +1,26 @@
 import fastify from 'fastify';
 import path from 'path';
 import fastifyStatic from '@fastify/static';
+import Database from 'better-sqlite3';
+import bcrypt from 'bcrypt'; // for hashing password
+const saltRounds = 10;
 
 const app = fastify();
+
+// Simple session management (in production, use proper session store)
+interface UserSession {
+	userId: number;
+	username: string;
+	sessionId: string;
+	loginTime: Date;
+}
+
+const activeSessions = new Map<string, UserSession>();
+
+// Generate session ID
+function generateSessionId(): string {
+	return Math.random().toString(36).substring(2) + Date.now().toString(36);
+}
 
 // import path from 'path';
 import { fileURLToPath } from 'url';
@@ -12,33 +30,92 @@ import { GameInfo, loginInfo } from './serverStructures.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Ensure data directory exists
+import { mkdirSync } from 'fs';
+const dataDir = path.join(__dirname, 'data');
+try {
+	mkdirSync(dataDir, { recursive: true });
+} catch (err) {
+	// Directory already exists, ignore
+}
+
+const db = new Database(path.join(__dirname, 'data', 'users.db'));
+
+// Create tables if they don't exist
+db.exec(`
+CREATE TABLE IF NOT EXISTS users (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Full_Name TEXT UNIQUE NOT NULL,
+	Alias TEXT UNIQUE NOT NULL,
+	password_hash TEXT NOT NULL,
+	avatar_url TEXT DEFAULT '/avatars/default.png',
+	status TEXT DEFAULT 'offline',
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS friends (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_id INTEGER NOT NULL,
+	friend_id INTEGER NOT NULL,
+	status TEXT DEFAULT 'pending',
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (user_id) REFERENCES users(id),
+	FOREIGN KEY (friend_id) REFERENCES users(id),
+	UNIQUE (user_id, friend_id)
+);
+
+CREATE TABLE IF NOT EXISTS matches (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	player1_id INTEGER NOT NULL,
+	player2_id INTEGER NOT NULL,
+	winner_id INTEGER,
+	score_player1 INTEGER DEFAULT 0,
+	score_player2 INTEGER DEFAULT 0,
+	Match_type TEXT DEFAULT 'Friendly',
+	match_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (player1_id) REFERENCES users(id),
+	FOREIGN KEY (player2_id) REFERENCES users(id),
+	FOREIGN KEY (winner_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS user_stats (
+	user_id INTEGER PRIMARY KEY,
+	wins INTEGER DEFAULT 0,
+	losses INTEGER DEFAULT 0,
+	matches_played INTEGER DEFAULT 0,
+	FOREIGN KEY (user_id) REFERENCES users(id)
+);
+`);
+
+
 let game = new GameInfo();
 
 let loginInformation: loginInfo[] = [
-	{
-		name: "a",
-		username: "a",
-		password: "a",
-		country: "a"
-	}, 
-	{
-		name: "b",
-		username: "b",
-		password: "b",
-		country: "b"
-	}, 
-	{
-		name: "c",
-		username: "c",
-		password: "c",
-		country: "c"
-	}, 
-	{
-		name: "d",
-		username: "d",
-		password: "d",
-		country: "d"
-	}
+	// {
+	// 	name: "a",
+	// 	username: "a",
+	// 	password: "a",
+	// 	country: "a"
+	// }, 
+	// {
+	// 	name: "b",
+	// 	username: "b",
+	// 	password: "b",
+	// 	country: "b"
+	// }, 
+	// {
+	// 	name: "c",
+	// 	username: "c",
+	// 	password: "c",
+	// 	country: "c"
+	// }, 
+	// {
+	// 	name: "d",
+	// 	username: "d",
+	// 	password: "d",
+	// 	country: "d"
+	// }
 ];
 
 let rounds = 1;
@@ -163,29 +240,37 @@ app.get('/pressspace', async (request, reply) => {
 });
 
 app.get('/pressArrowUp', async (request, reply) => {
-	if (game.player1Paddle.y > 0 && !game.ball.ballPaused) {
-		game.player1Paddle.y -= 5; // Move paddle up
+	if (game.player1Paddle.y > 0) {
+		game.player1Paddle.y -= 15; // Increased movement speed
+		if (game.player1Paddle.y < 0) game.player1Paddle.y = 0; // Prevent going off screen
 	}
 	reply.send({ status: 'Paddle 1 moved up' });
 });
 
 app.get('/pressArrowDown', async (request, reply) => {
-	if (game.player1Paddle.y + game.player1Paddle.height < game.canvas.height && !game.ball.ballPaused) {
-		game.player1Paddle.y += 5; // Move paddle down
+	if (game.player1Paddle.y + game.player1Paddle.height < game.canvas.height) {
+		game.player1Paddle.y += 15; // Increased movement speed
+		if (game.player1Paddle.y + game.player1Paddle.height > game.canvas.height) {
+			game.player1Paddle.y = game.canvas.height - game.player1Paddle.height; // Prevent going off screen
+		}
 	}
 	reply.send({ status: 'Paddle 1 moved down' });
 });
 
 app.get('/pressW', async (request, reply) => {
-	if (game.player2Paddle.y > 0 && !game.ball.ballPaused) {
-		game.player2Paddle.y -= 5; // Move paddle up
+	if (game.player2Paddle.y > 0) {
+		game.player2Paddle.y -= 15; // Increased movement speed
+		if (game.player2Paddle.y < 0) game.player2Paddle.y = 0; // Prevent going off screen
 	}
 	reply.send({ status: 'Paddle 2 moved up' });
 });
 
 app.get('/pressS', async (request, reply) => {
-	if (game.player2Paddle.y + game.player2Paddle.height < game.canvas.height && !game.ball.ballPaused) {
-		game.player2Paddle.y += 5; // Move paddle down
+	if (game.player2Paddle.y + game.player2Paddle.height < game.canvas.height) {
+		game.player2Paddle.y += 15; // Increased movement speed
+		if (game.player2Paddle.y + game.player2Paddle.height > game.canvas.height) {
+			game.player2Paddle.y = game.canvas.height - game.player2Paddle.height; // Prevent going off screen
+		}
 	}
 	reply.send({ status: 'Paddle 2 moved down' });
 });
@@ -216,32 +301,294 @@ app.get('/getstatus', async (request, reply) => {
 	});
 });
 
-app.post("/register", async (request, reply) => {
-	const { name, username, password, country } = request.body as loginInfo; // Quick fix, but less type-safe
-	const newUser = { name, username, password, country } as loginInfo;
-	for (const user of loginInformation) {
-		if (user.username === username || user.name === name) {
-			reply.status(400).send({ status: 400, message: 'Username already exists'});
+// Debug endpoint to view database contents
+app.get('/debug/users', async (request, reply) => {
+	try {
+		const stmt = db.prepare(`SELECT id, Full_Name, Alias, avatar_url, status, created_at FROM users`);
+		const users = stmt.all();
+		reply.send({ users });
+	} catch (err) {
+		reply.status(500).send({ error: 'Database error' });
+	}
+});
+
+// Debug endpoint to show tables
+app.get('/debug/tables', async (request, reply) => {
+	try {
+		const stmt = db.prepare(`SELECT name FROM sqlite_master WHERE type='table'`);
+		const tables = stmt.all();
+		reply.send({ tables });
+	} catch (err) {
+		reply.status(500).send({ error: 'Database error' });
+	}
+});
+
+// Delete user endpoint
+app.delete('/debug/users/:username', async (request, reply) => {
+	try {
+		const { username } = request.params as { username: string };
+		const stmt = db.prepare(`DELETE FROM users WHERE Alias = ?`);
+		const result = stmt.run(username);
+		
+		if (result.changes === 0) {
+			reply.status(404).send({ error: 'User not found' });
+		} else {
+			reply.send({ message: `User '${username}' deleted successfully`, deletedRows: result.changes });
+		}
+	} catch (err) {
+		reply.status(500).send({ error: 'Database error' });
+	}
+});
+
+// Update user endpoint
+app.put('/debug/users/:username', async (request, reply) => {
+	try {
+		const { username } = request.params as { username: string };
+		const { Full_Name, avatar_url, status } = request.body as { 
+			Full_Name?: string; 
+			avatar_url?: string; 
+			status?: string; 
+		};
+
+		// Build dynamic UPDATE query based on provided fields
+		const updates: string[] = [];
+		const values: any[] = [];
+
+		if (Full_Name !== undefined) {
+			updates.push('Full_Name = ?');
+			values.push(Full_Name);
+		}
+		if (avatar_url !== undefined) {
+			updates.push('avatar_url = ?');
+			values.push(avatar_url);
+		}
+		if (status !== undefined) {
+			updates.push('status = ?');
+			values.push(status);
+		}
+
+		if (updates.length === 0) {
+			reply.status(400).send({ error: 'No fields to update provided' });
 			return;
 		}
+
+		// Add updated_at timestamp
+		updates.push('updated_at = CURRENT_TIMESTAMP');
+		
+		// Add username to values array for WHERE clause
+		values.push(username);
+
+		const query = `UPDATE users SET ${updates.join(', ')} WHERE Alias = ?`;
+		const stmt = db.prepare(query);
+		const result = stmt.run(...values);
+
+		if (result.changes === 0) {
+			reply.status(404).send({ error: 'User not found' });
+		} else {
+			reply.send({ 
+				message: `User '${username}' updated successfully`, 
+				updatedRows: result.changes,
+				updatedFields: updates.slice(0, -1) // Remove the timestamp update from display
+			});
+		}
+	} catch (err: any) {
+		if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+			reply.status(400).send({ error: 'Full_Name must be unique' });
+		} else {
+			reply.status(500).send({ error: 'Database error' });
+		}
 	}
-	loginInformation.push(newUser);
-	console.log(`User ${username} registered successfully`);
-	// for (const user of loginInformation) {
-	// 	console.log(`Registered user: ${user.username}, Name: ${user.name}, Country: ${user.country}`);
-	// }
-	reply.send({ status: 200, message: 'User registered successfully' });
 });
+
+// Update user password endpoint
+app.put('/debug/users/:username/password', async (request, reply) => {
+	try {
+		const { username } = request.params as { username: string };
+		const { newPassword } = request.body as { newPassword: string };
+
+		if (!newPassword || newPassword.trim() === '') {
+			reply.status(400).send({ error: 'New password is required' });
+			return;
+		}
+
+		const password_hash = await bcrypt.hash(newPassword, saltRounds);
+		
+		const stmt = db.prepare(`
+			UPDATE users 
+			SET password_hash = ?, updated_at = CURRENT_TIMESTAMP 
+			WHERE Alias = ?
+		`);
+		const result = stmt.run(password_hash, username);
+
+		if (result.changes === 0) {
+			reply.status(404).send({ error: 'User not found' });
+		} else {
+			reply.send({ 
+				message: `Password for user '${username}' updated successfully`, 
+				updatedRows: result.changes 
+			});
+		}
+	} catch (err) {
+		reply.status(500).send({ error: 'Database error' });
+	}
+});
+
+
+
+app.post("/register", async (request, reply) => {
+	const { name, username, password, country } = request.body as loginInfo;
+
+	const alias = username;
+	const fullName = name;
+	const password_hash = await bcrypt.hash(password, saltRounds);
+
+	try {
+		const stmt = db.prepare(`
+			INSERT INTO users (Full_name, Alias, password_hash)
+			VALUES (?, ?, ?)
+		`);
+		stmt.run(fullName, alias, password_hash);
+
+		reply.send({ status: 200, message: 'User registered successfully' });
+	} catch (err: any) {
+		if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+			reply.status(400).send({ status: 400, message: 'User already exists' });
+		} else {
+			reply.status(500).send({ status: 500, message: 'Server error' });
+		}
+	}
+});
+
+// app.post("/register", async (request, reply) => {
+// 	const { name, username, password, country } = request.body as loginInfo; // Quick fix, but less type-safe
+// 	const newUser = { name, username, password, country } as loginInfo;
+// 	for (const user of loginInformation) {
+// 		if (user.username === username || user.name === name) {
+// 			reply.status(400).send({ status: 400, message: 'Username already exists'});
+// 			return;
+// 		}
+// 	}
+// 	loginInformation.push(newUser);
+// 	console.log(`User ${username} registered successfully`);
+// 	// for (const user of loginInformation) {
+// 	// 	console.log(`Registered user: ${user.username}, Name: ${user.name}, Country: ${user.country}`);
+// 	// }
+// 	reply.send({ status: 200, message: 'User registered successfully' });
+// });
 
 app.post("/login", async (request, reply) => {
 	const { username, password } = request.body as { username: string; password: string };
-	const user = loginInformation.find(user => user.username === username && user.password === password);
+
+	const stmt = db.prepare(`SELECT * FROM users WHERE Alias = ?`);
+	const user = stmt.get(username) as any;
+
 	if (!user) {
 		reply.status(401).send({ status: 401, message: 'Invalid username or password' });
 		return;
 	}
-	reply.send({ status: 200, message: 'Login successful', user });
+
+	const match = await bcrypt.compare(password, user.password_hash);
+	if (!match) {
+		reply.status(401).send({ status: 401, message: 'Invalid username or password' });
+		return;
+	}
+
+	// Create session
+	const sessionId = generateSessionId();
+	const session: UserSession = {
+		userId: user.id,
+		username: user.Alias,
+		sessionId: sessionId,
+		loginTime: new Date()
+	};
+	activeSessions.set(sessionId, session);
+
+	// Update user status to online
+	const updateStmt = db.prepare(`UPDATE users SET status = 'online', updated_at = CURRENT_TIMESTAMP WHERE id = ?`);
+	updateStmt.run(user.id);
+
+	reply.send({ 
+		status: 200, 
+		message: 'Login successful', 
+		user: { id: user.id, alias: user.Alias },
+		sessionId: sessionId
+	});
 });
+
+// Check session endpoint
+app.get('/check-session/:sessionId', async (request, reply) => {
+	const { sessionId } = request.params as { sessionId: string };
+	
+	const session = activeSessions.get(sessionId);
+	if (!session) {
+		reply.status(401).send({ status: 401, message: 'Invalid session' });
+		return;
+	}
+
+	reply.send({ 
+		status: 200, 
+		message: 'Valid session', 
+		user: { id: session.userId, alias: session.username },
+		loginTime: session.loginTime
+	});
+});
+
+// Logout endpoint
+app.post('/logout', async (request, reply) => {
+	const { sessionId } = request.body as { sessionId: string };
+	
+	const session = activeSessions.get(sessionId);
+	if (session) {
+		// Update user status to offline
+		const updateStmt = db.prepare(`UPDATE users SET status = 'offline', updated_at = CURRENT_TIMESTAMP WHERE id = ?`);
+		updateStmt.run(session.userId);
+		
+		// Remove session
+		activeSessions.delete(sessionId);
+	}
+
+	reply.send({ status: 200, message: 'Logged out successfully' });
+});
+
+// Start game endpoint (requires valid session)
+app.post('/start-game', async (request, reply) => {
+	const { sessionId } = request.body as { sessionId: string };
+	
+	const session = activeSessions.get(sessionId);
+	if (!session) {
+		reply.status(401).send({ status: 401, message: 'Invalid session' });
+		return;
+	}
+
+	// Reset the game state for a new game
+	resetGame();
+	
+	reply.send({ 
+		status: 200, 
+		message: 'Game started successfully',
+		player: { id: session.userId, alias: session.username },
+		gameState: {
+			ballX: game.ball.ballX,
+			ballY: game.ball.ballY,
+			player1_y: game.player1Paddle.y,
+			player2_y: game.player2Paddle.y,
+			player1_score: game.player1.playerscore,
+			player2_score: game.player2.playerscore,
+			gamefinished: gameFinished
+		}
+	});
+});
+
+
+// app.post("/login", async (request, reply) => {
+// 	const { username, password } = request.body as { username: string; password: string };
+// 	const user = loginInformation.find(user => user.username === username && user.password === password);
+// 	if (!user) {
+// 		reply.status(401).send({ status: 401, message: 'Invalid username or password' });
+// 		return;
+// 	}
+// 	reply.send({ status: 200, message: 'Login successful', user });
+// });
 
 app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
 	if (err) throw err;
