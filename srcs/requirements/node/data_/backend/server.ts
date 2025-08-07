@@ -1,6 +1,6 @@
 import fastify from 'fastify';
 import path from 'path';
-import fastifyStatic from '@fastify/static';
+import fastifyStatic from '@fastify/static'; // is a plugin for Fastify used to serve static files (like HTML, CSS, JS, images)
 import Database from 'better-sqlite3';
 import bcrypt from 'bcrypt'; // for hashing password
 const saltRounds = 10;
