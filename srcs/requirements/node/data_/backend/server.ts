@@ -5,7 +5,7 @@ import Database from 'better-sqlite3';
 import bcrypt from 'bcrypt'; // for hashing password
 const saltRounds = 10;
 
-const app = fastify();
+const app = fastify(); //  creates an instance of your Fastify server. "app" is an object e.g app.get
 
 // Simple session management (in production, use proper session store)
 interface UserSession {
