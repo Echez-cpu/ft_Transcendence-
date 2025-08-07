@@ -221,6 +221,14 @@ setInterval(() => {
 	updateGame();
 }, 1000 / 60);
 
+// This tells your Fastify server to:
+
+// Register the fastify-static plugin.
+
+// Serve static files (e.g., .html, .css, .js, images) from a specific folder.
+
+// Make them accessible via URLs starting with /
+
 app.register(fastifyStatic, {
 	root: path.join(__dirname, '../public'),
 	prefix: '/',
