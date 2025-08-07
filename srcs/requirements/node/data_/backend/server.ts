@@ -323,7 +323,7 @@ app.get('/debug/users', async (request, reply) => {
 // Debug endpoint to show tables
 app.get('/debug/tables', async (request, reply) => {
 	try {
-		const stmt = db.prepare(`SELECT name FROM sqlite_master WHERE type='table'`);
+		const stmt = db.prepare(`SELECT name FROM sqlite_master WHERE type='table'`); // db.prepare(...) Prepares a raw SQL statement that will be executed against the SQLite database
 		const tables = stmt.all();
 		reply.send({ tables });
 	} catch (err) {
