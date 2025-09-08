@@ -6,6 +6,7 @@ import { GameInfo, pageIndex, PlayerLogin } from "./frontendStructures.js";
 import { userInfo } from "./serverStructures.js"
 import { hideEverything } from "./screenDisplay.js"
 import { logout } from "./logout.js";
+import { checkPassword } from "./registration.js"
 
 var settingsAlreadyLoggedIn: boolean = false;
 //to determine whether user was logged in before accessing settings
