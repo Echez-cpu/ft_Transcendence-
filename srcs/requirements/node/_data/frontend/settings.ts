@@ -68,7 +68,7 @@ async function setSettingFields(_username: string, userInfoTemp: userInfo): Prom
 	settingsUsername.value = playerInfo.username;
 	settingsPassword.value = "";
 	settingsCountry.value = playerInfo.country;
-	console.log("ID: " + playerInfo.id);
+	//console.log("ID: " + playerInfo.id);
 
 	userInfoTemp.id = playerInfo.id;
 	userInfoTemp.Full_Name = playerInfo.name;
@@ -80,7 +80,7 @@ async function setSettingFields(_username: string, userInfoTemp: userInfo): Prom
 	userInfoTemp.updated_at = "";
 	userInfoTemp.created_at = "";
 
-	console.log("ID after: " + userInfoTemp.id);
+	//console.log("ID after: " + userInfoTemp.id);
 	// here set fields to what database has currently stored to display in settings
 	return true;
 }
@@ -237,8 +237,8 @@ export function callSettingsEventlisteners(game: GameInfo) {
 		const avatarFileInput = document.getElementById("avatarUpload") as HTMLInputElement; // **file input**
 		const avatar_url_Path = document.getElementById("avatarPreviewSettings") as HTMLInputElement;
 
-		console.log(game.userInfoTemp.id);
-		console.log(usernameInput.value);
+		//console.log(game.userInfoTemp.id);
+		//console.log(usernameInput.value);
 		const formData = new FormData();
 		formData.append("id", String(game.userInfoTemp.id));
 		formData.append("name", nameInput.value.trim());
@@ -247,8 +247,8 @@ export function callSettingsEventlisteners(game: GameInfo) {
 		formData.append("country", countryInput.value.trim());
 
 		const trimmedPath = avatar_url_Path.src.replace(window.location.origin, "");
-		console.log("This na from HTML file:", trimmedPath.trim());
-		console.log("userinfo class:", game.userInfoTemp.avatar_url);
+		//console.log("This na from HTML file:", trimmedPath.trim());
+		//console.log("userinfo class:", game.userInfoTemp.avatar_url);
 
 		if (nameInput.value.length > 6) {
 			alert("Alias must below 6 characters!");

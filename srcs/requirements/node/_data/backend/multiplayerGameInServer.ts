@@ -34,7 +34,7 @@ export function multiplayerGame(app: FastifyInstance, db: any, game: GameInfo) {
 				if (response.reply === 'accept') {
 					game.player1.name = username;
 					game.player2.name = invitedUser;
-					console.log('game is playing between', game.player1.name, 'and', game.player2.name);
+					//console.log('game is playing between', game.player1.name, 'and', game.player2.name);
 					// game.remoteMode = true;
 					return reply.status(200).send({ message: `Game invitation accepted by ${invitedUser}` });
 				} else {

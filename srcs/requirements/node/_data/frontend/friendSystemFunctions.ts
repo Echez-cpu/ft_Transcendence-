@@ -9,7 +9,7 @@ export function getFriendList(username: string) {
 			return response.json();
 		})
 		.then(data => {
-			console.log("Friend list:", data.friendList);
+			//console.log("Friend list:", data.friendList);
 			game.friendList = data.friendList || [];
 			const friendListElement = document.getElementById("friendList");
 			if (friendListElement) {
@@ -37,7 +37,7 @@ export function getFriendRequestList(username: string) {
 			return response.json();
 		})
 		.then(data => {
-			console.log("Friend request list:", data.friendRequestList);
+			//console.log("Friend request list:", data.friendRequestList);
 			game.friendRequestList = data.friendRequestList || [];
 			if (game.friendRequestList.length === 0) {
 				const friendRequestListElement = document.getElementById("friendRequestsList");
@@ -71,7 +71,7 @@ export function getRejectedFriendRequests(username: string) {
 			return response.json();
 		})
 		.then(data => {
-			console.log("Rejected friend requests:", data.rejectedFriendRequests);
+			//console.log("Rejected friend requests:", data.rejectedFriendRequests);
 			game.rejectedFriendRequests = data.rejectedFriendRequests || [];
 			for (const request of game.rejectedFriendRequests) {
 				alert(`Rejected friend request from: ${request}`);

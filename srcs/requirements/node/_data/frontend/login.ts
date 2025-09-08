@@ -37,7 +37,7 @@ export function getUserInfoAndCreateUserInterface(username: string) {
 			const userStatusInterFace = document.createElement("ul");
 			userStatusInterFace.id = "userStatusInterface";
 			userStatusInterFace.className = "absolute left-0 top-0 bg-gray-500/80 w-[200px] h-auto border border-black rounded-oval px-5 py-2.5";
-			document.body.appendChild(userStatusInterFace);document.body.appendChild(userStatusInterFace);
+			document.body.appendChild(userStatusInterFace); document.body.appendChild(userStatusInterFace);
 			userStatusInterFace.innerHTML = `
 				<li><strong>Username:</strong> ${username}</li>
 				<li><img src="${userInfo.avatarUrl}" alt="${username}'s avatar" class="w-20 h-20 rounded-full mb-2.5" /></li>
@@ -220,11 +220,11 @@ export function callLoginEventListeners(game: GameInfo) {
 	document.getElementById("friendList2")?.addEventListener("click", (e) => {// this is also just a test
 		const target = e.target as HTMLElement;
 		if (target.tagName === "LI") {
-			console.log(`${target.textContent} clicked`);
+			//console.log(`${target.textContent} clicked`);
 
 			// Handle specific items
 			if (target.id === "Rank: Pro") {
-				console.log("I love this rank!");
+				//console.log("I love this rank!");
 				// Handle rank logic here
 			}
 		}

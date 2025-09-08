@@ -61,7 +61,7 @@ async function handleGameInvitation(data: any) {
 import { startMultiplayerGame } from "./multiplayerGame.js";
 function handleMultiplayerGameStart(data: any) {
 	const { play1, play2, play3, play4 } = data as { play1: string, play2: string, play3: string, play4: string };
-	console.log("Starting multiplayer game with players:", play1, play2, play3, play4);
+	//console.log("Starting multiplayer game with players:", play1, play2, play3, play4);
 	startMultiplayerGame(play1, play2, play3, play4);
 }
 
@@ -104,17 +104,17 @@ export function createWebSocketConnection(username: string) {
 	game.websocket = new WebSocket(`wss://10.12.9.5:3000/ws?username=${username}`); // Accept self-signed cert
 
 	game.websocket.onopen = () => {
-		console.log("✅ WebSocket connection established successfully!");
+		//console.log("✅ WebSocket connection established successfully!");
 		// Send test message AFTER connection is established
 	};
 
 	game.websocket.onmessage = (event) => {
-		// console.log("📥 Received from server:", event.data);
+		// //console.log("📥 Received from server:", event.data);
 		handleWebSocketMessage(event);
 	};
 
 	game.websocket.onclose = () => {
-		console.log("WebSocket connection closed.");
+		//console.log("WebSocket connection closed.");
 	};
 
 	game.websocket.onerror = (error) => {

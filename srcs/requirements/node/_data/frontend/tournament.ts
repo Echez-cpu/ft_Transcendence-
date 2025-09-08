@@ -37,8 +37,7 @@ function showTournamentResults(placements: tournamentPlacements[], game: GameInf
 	const results = document.getElementById("tournamentResults") as HTMLDivElement;
 	const placementList = document.getElementById("placementList") as HTMLOListElement;
 
-	if (placementList && results)
-	{
+	if (placementList && results) {
 		placementList.innerHTML = "";
 		placements.forEach((player, index) => {
 			const listItem = document.createElement("li");
@@ -49,15 +48,14 @@ function showTournamentResults(placements: tournamentPlacements[], game: GameInf
 
 		results.classList.remove("hidden");
 	}
-	else
-	{
-		console.log("Failed to load placement List..");
+	else {
+		//console.log("Failed to load placement List..");
 		fetch("/endTournament");
 		fetch("/endLocalMode");
 		tournamentEnd(1, game);
 		navigate(game.availablePages[pageIndex.HOME], "loggedIn", game);
 	}
-} 
+}
 
 export function tournamentFinished(game: GameInfo): void {
 	var last = -1;
@@ -125,7 +123,7 @@ export function tournamentPlayGame(game: GameInfo): number 	//loop sets matches 
 {
 	var index = 0;
 	var length = game.t.matches.length;
-	console.log("Iteration CurrentRound: ", game.t.currentRound, " Current stage: ", game.t.stage);
+	//console.log("Iteration CurrentRound: ", game.t.currentRound, " Current stage: ", game.t.stage);
 	if (game.t.currentRound === 0)
 		setMatchOrder(game);
 	if (game.t.stage !== TournamentStage.Registration && game.t.stage !== TournamentStage.Complete) {
@@ -148,19 +146,19 @@ export function tournamentPlayGame(game: GameInfo): number 	//loop sets matches 
 					})
 					.then(data => {
 						game.localMode = true;
-						console.log("Player added to game:", data);
+						//console.log("Player added to game:", data);
 					})
 					.catch(error => {
 						console.error("Error adding player to game:", error);
 					});
 			}
-			console.log(game.t.matches[game.t.matches.length - 1].player1.name, ": ", game.t.matches[game.t.matches.length - 1].player1.score);
-			console.log(game.t.matches[game.t.matches.length - 1].player2.name, ": ", game.t.matches[game.t.matches.length - 1].player2.score);
+			//console.log(game.t.matches[game.t.matches.length - 1].player1.name, ": ", game.t.matches[game.t.matches.length - 1].player1.score);
+			//console.log(game.t.matches[game.t.matches.length - 1].player2.name, ": ", game.t.matches[game.t.matches.length - 1].player2.score);
 		}
 		else if (game.t.stage === TournamentStage.Final || game.t.stage === TournamentStage.Consolation)	// loser vs loser | winner vs winner
 		{
 			const isWinnerMatch = game.t.stage === TournamentStage.Final ? 1 : 0;
-			console.log("isWinnerMatch:", isWinnerMatch, "stage:", game.t.stage);
+			//console.log("isWinnerMatch:", isWinnerMatch, "stage:", game.t.stage);
 			// 1 -> winnerMatch, 0 -> loserMatch
 			let player1 = game.t.defaultPlayer;
 			let player2 = game.t.defaultPlayer;
@@ -194,13 +192,13 @@ export function tournamentPlayGame(game: GameInfo): number 	//loop sets matches 
 			// 	})
 			// 	.then(data => {
 			// 		game.localMode = true;
-			// 		console.log("Player added to game:", data);
+			// 		//console.log("Player added to game:", data);
 			// 	})
 			// 	.catch(error => {
 			// 		console.error("Error adding player to game:", error);
 			// 	});
-			console.log(player1.name, ": ", player1.score);
-			console.log(player2.name, ": ", player2.score);
+			//console.log(player1.name, ": ", player1.score);
+			//console.log(player2.name, ": ", player2.score);
 		}
 		length = game.t.matches.length;
 		game.t.matches[length - 1] = game.t.matches[length - 1];
@@ -270,12 +268,12 @@ export function tournamentStart(game: GameInfo) {
 export function tournamentLogic(game: GameInfo): number {
 	var length = game.t.matches.length;
 
-	//console.log("Current Match:", game.t.matches[length -1].player1.name, "vs", game.t.matches[length -1].player2.name);
+	////console.log("Current Match:", game.t.matches[length -1].player1.name, "vs", game.t.matches[length -1].player2.name);
 
 	if (game.t.matches[length - 1].player1.score === rounds ||
 		game.t.matches[length - 1].player2.score === rounds) {
 		// makes sure that once game is done it is set to correct stage
-		// console.log("Current round:", game.t.currentRound);
+		// //console.log("Current round:", game.t.currentRound);
 		if (game.t.currentRound === 1)
 			game.t.stage = TournamentStage.Regular2;	//sets the stage to the oncoming stage
 		else if (game.t.currentRound === 2)

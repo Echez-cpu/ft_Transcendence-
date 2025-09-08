@@ -66,7 +66,7 @@ function showTwoPlayerMatchInviteForm() {
 function hideTwoPlayerMatchInviteForm() {
 	const inviteForm = document.getElementById("twoPlayerMatchInviteForm") as HTMLFormElement;
 	if (inviteForm) inviteForm.classList.add("hidden");
-	const input  = document.getElementById("twoPlayerMatchInviteInput") as HTMLInputElement;
+	const input = document.getElementById("twoPlayerMatchInviteInput") as HTMLInputElement;
 	if (input) input.value = "";
 }
 
@@ -144,7 +144,7 @@ async function loginTotwoPlayerMatch(game: GameInfo): Promise<boolean> {
 			})
 			.then(data => {
 				game.localMode = true;
-				console.log("Player added to game:", data);
+				//console.log("Player added to game:", data);
 			})
 			.catch(error => {
 				console.error("Error adding player to game:", error);
@@ -224,7 +224,7 @@ export function callTwoPlayerMatchEventListeners(game: GameInfo) {
 				game.localMode = true;
 				document.addEventListener("keydown", handleKeydown);
 				document.addEventListener("keyup", handleKeyup);
-				console.log("Player added to game:", data);
+				//console.log("Player added to game:", data);
 			})
 			.catch(error => {
 				console.error("Error adding player to game:", error);
@@ -267,10 +267,9 @@ export function callTwoPlayerMatchEventListeners(game: GameInfo) {
 			alert("Please enter a friend's username.");
 			return;
 		}
-		if (inviteUsername === game.currentlyLoggedIn.name)
-		{
+		if (inviteUsername === game.currentlyLoggedIn.name) {
 			alert("You cannot invite yourself!");
-			return ;
+			return;
 		}
 		sendTwoPlayerMatchInvite(inviteUsername, game);
 		hideTwoPlayerMatchInviteForm();

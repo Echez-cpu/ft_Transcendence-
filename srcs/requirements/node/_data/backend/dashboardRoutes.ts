@@ -27,8 +27,8 @@ export async function dashboardRoutes(app: FastifyInstance) {
 	app.get("/user/:alias/stats", { preHandler: [app.authenticate] }, async (request, reply) => {
 		const alias = (request.params as { alias: string }).alias;
 
-		console.log("📌 Params:", request.params);
-		console.log("📌 Alias:", alias);
+		//console.log("📌 Params:", request.params);
+		//console.log("📌 Alias:", alias);
 
 		try {
 			const userRow = db.prepare("SELECT wins, losses FROM users WHERE Full_Name = ?").get(alias) as { wins: number; losses: number } | undefined;

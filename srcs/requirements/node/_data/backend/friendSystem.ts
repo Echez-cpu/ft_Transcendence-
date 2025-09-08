@@ -8,7 +8,7 @@ export function friendSystem(app: FastifyInstance, db: any, game: GameInfo) {
 			nameToAdd: string;
 			accountName: string;
 		};
-		console.log(`Friend request: ${accountName} wants to add ${nameToAdd}`);
+		//console.log(`Friend request: ${accountName} wants to add ${nameToAdd}`);
 		// check if the user exist
 		const userExists = db.prepare(`SELECT * FROM users WHERE Full_Name = ?`).get(nameToAdd);
 		if (!userExists) {
@@ -297,7 +297,7 @@ export function friendSystem(app: FastifyInstance, db: any, game: GameInfo) {
 			if (response.reply === 'accept') {
 				game.player1.name = username;
 				game.player2.name = invitedUser;
-				console.log('game is playing between', game.player1.name, 'and', game.player2.name);
+				//console.log('game is playing between', game.player1.name, 'and', game.player2.name);
 				game.remoteMode = true;
 				game.gameFinished = false;
 				return reply.status(200).send({ message: `Game invitation accepted by ${invitedUser}` });

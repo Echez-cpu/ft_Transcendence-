@@ -65,7 +65,7 @@ function checkDoubleLogin(players: PlayerLogin[], newPlayer: PlayerLogin): boole
 export async function tournamentRegisterPlayers(game: GameInfo): Promise<void> {
 	const players: PlayerLogin[] = [];
 	for (let i = 1; i <= 4; i++) {
-		console.log("current iteration: " + i);
+		//console.log("current iteration: " + i);
 		let retries = 0;
 		let player;
 
@@ -73,14 +73,14 @@ export async function tournamentRegisterPlayers(game: GameInfo): Promise<void> {
 			player = await registerPlayer(i, game, players);
 			retries++;
 			if (retries > 3) {
-			console.warn("Too many retries for player", i);
-			break;
+				console.warn("Too many retries for player", i);
+				break;
 			}
 		} while (player && checkDoubleLogin(players, player));
 
 		if (!player || !player.username || !player.password) break;
 
-		console.log("Registered player:", player);
+		//console.log("Registered player:", player);
 		players.push(player);
 		game.players.push({ name: player.username, gamesLost: 0, gamesWon: 0, playerscore: 0 });
 	}
@@ -91,19 +91,19 @@ export async function tournamentRegisterPlayers(game: GameInfo): Promise<void> {
 		document.addEventListener("keydown", handleKeydown);
 		document.addEventListener("keyup", handleKeyup);
 		fetch("/startTournament")
-		.then(response => {
-			if (!response.ok) {
-				throw new Error("Failed to start tournament");
-			}
-			return response.json();
-		})
-		.then(data => {
-			console.log("Tournament started:", data);
-			tournamentPlayGame(game);
-		})
-		.catch(error => {
-			console.error("Error starting tournament:", error);
-		});
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("Failed to start tournament");
+				}
+				return response.json();
+			})
+			.then(data => {
+				//console.log("Tournament started:", data);
+				tournamentPlayGame(game);
+			})
+			.catch(error => {
+				console.error("Error starting tournament:", error);
+			});
 	} else {
 		game.players.splice(0, game.players.length);
 		tournamentEnd(0, game);
@@ -147,7 +147,7 @@ export function callTournamentEventListeners(game: GameInfo) {
 				return response.json();
 			})
 			.then(data => {
-				console.log("Tournament ended:", data);
+				//console.log("Tournament ended:", data);
 			})
 			.catch(error => {
 				console.error("Error ending tournament:", error);

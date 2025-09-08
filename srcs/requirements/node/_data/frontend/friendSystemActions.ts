@@ -28,13 +28,13 @@ export function getChatHistoryFunction(game: GameInfo) {
 		const target = e.target as HTMLElement;
 		if (target.tagName === "LI") {
 			if (!target.id) {
-				console.log("LI element is missing an ID:", target);
+				//console.log("LI element is missing an ID:", target);
 				return;
 			}
-			console.log(`${target.textContent} clicked`);
+			//console.log(`${target.textContent} clicked`);
 			game.sendMessageTo = target.id;
-			console.log(`Message will be sent to: ${game.sendMessageTo}`);
-			
+			//console.log(`Message will be sent to: ${game.sendMessageTo}`);
+
 			// Show message input when a friend is selected Remi
 			const messagesElement = document.getElementById("messages");
 			if (messagesElement) {
@@ -54,7 +54,7 @@ export function getChatHistoryFunction(game: GameInfo) {
 					return response.json();
 				})
 				.then(data => {
-					console.log("Chat history:", data.chatHistory);
+					//console.log("Chat history:", data.chatHistory);
 					game.chatHistory = data.chatHistory || [];
 					const chatHistoryElement = document.getElementById("friendList2");
 					if (chatHistoryElement) {
@@ -103,7 +103,7 @@ export function addFriendFunction(game: GameInfo) {
 						}
 					})
 			}
-		} else if (friendName === ""){
+		} else if (friendName === "") {
 			alert("Friend name cannot be empty!");
 		}
 	});
@@ -167,7 +167,7 @@ export function friendRequestListFunction(game: GameInfo) {
 	document.getElementById("friendRequestsList")?.addEventListener("click", async (e) => {
 		const target = e.target as HTMLElement;
 		if (target.tagName === "LI") {
-			console.log(`${target.textContent} clicked`);
+			//console.log(`${target.textContent} clicked`);
 			const friendName = target.id;
 			const reply = await createConfirmModal(`Do you want to accept the friend request from ${friendName}?`);
 			if (reply) {
@@ -179,7 +179,7 @@ export function friendRequestListFunction(game: GameInfo) {
 						return response.json();
 					})
 					.then(data => {
-						console.log("Friend request accepted:", data);
+						//console.log("Friend request accepted:", data);
 						getFriendList(game.currentlyLoggedIn.name);
 						getFriendRequestList(game.currentlyLoggedIn.name);
 					})
@@ -195,7 +195,7 @@ export function friendRequestListFunction(game: GameInfo) {
 						return response.json();
 					})
 					.then(data => {
-						console.log("Friend request rejected:", data);
+						//console.log("Friend request rejected:", data);
 						getFriendList(game.currentlyLoggedIn.name);
 						getFriendRequestList(game.currentlyLoggedIn.name);
 					})
@@ -305,7 +305,7 @@ export function showFriendStatus(game: GameInfo) {
 			// Only handle LI elements
 			if (target.tagName === "LI") {
 				if (!target.id) {
-					console.log("LI element is missing an ID:", target);
+					//console.log("LI element is missing an ID:", target);
 					return;
 				}
 				if (hoverTimer === null) {
@@ -328,7 +328,7 @@ export function showFriendStatus(game: GameInfo) {
 							.then(data => {
 								const avatarUrl = data.avatarUrl || "";
 								const avatarImg = document.createElement("img");
-								console.log("Avatar URL:", avatarUrl);
+								//console.log("Avatar URL:", avatarUrl);
 								avatarImg.src = avatarUrl;
 								avatarImg.alt = `${target.id}'s avatar`;
 								avatarImg.className = "w-12 h-12";
@@ -343,7 +343,7 @@ export function showFriendStatus(game: GameInfo) {
 							})
 							.then(() => {
 								labelButton(target, userinfo, game);
-								console.log("Hover timer triggered for:", target.id);
+								//console.log("Hover timer triggered for:", target.id);
 							});
 					}, 3000);
 				}

@@ -140,7 +140,7 @@ app.post("/register", async (request, reply) => {
 		} else if (part.type === 'field') {
 			// Handle text fields - v8+ has better type safety for fields
 			const fieldValue = (part as any).value;
-			// console.log("Part:", part.type, part.fieldname, part.filename || part.value);
+			// //console.log("Part:", part.type, part.fieldname, part.filename || part.value);
 			switch (part.fieldname) {
 				case 'name': name = fieldValue; break;
 				case 'username': username = fieldValue; break;
@@ -174,7 +174,7 @@ app.post("/register", async (request, reply) => {
 			reply.status(500).send({ status: 500, message: 'Server error' });
 		}
 	}
-	console.log(`User ${username} registered successfully`);
+	//console.log(`User ${username} registered successfully`);
 });
 
 app.post("/updateUser", { preValidation: [app.authenticate] }, async (request, reply) => {
@@ -213,8 +213,8 @@ app.post("/updateUser", { preValidation: [app.authenticate] }, async (request, r
 			reply.status(400).send({ status: 400, message: "Missing user ID" });
 			return;
 		}
-		console.log(password);
-		console.log(id);
+		//console.log(password);
+		//console.log(id);
 
 		// hash the password if it was changed.
 		let password_hash = password;
@@ -247,9 +247,9 @@ app.post("/userInfo", { preValidation: [app.authenticate] }, async (request, rep
 		return;
 	}
 
-	console.log("this is in the backend");
-	console.log(user.avatar_url);
-	console.log("this is in the backend");
+	//console.log("this is in the backend");
+	//console.log(user.avatar_url);
+	//console.log("this is in the backend");
 	reply.type('application/json').send({
 		id: user.id,
 		alias: user.Alias,
@@ -397,5 +397,5 @@ app.get('/keepLogin', { preValidation: [app.authenticate] }, async (request: Fas
 
 app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
 	if (err) throw err;
-	console.log(`Server running at ${address}`);
+	//console.log(`Server running at ${address}`);
 });

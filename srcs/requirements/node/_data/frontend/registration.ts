@@ -55,7 +55,7 @@ export function callRegistrationEventListeners(game: GameInfo) {
 
 
 	document.addEventListener("DOMContentLoaded", () => {
-		console.log("DOM is fully loaded and parsed!");
+		//console.log("DOM is fully loaded and parsed!");
 
 		// Get avatar input and set up preview once
 		const avatarInput = document.getElementById("registerAvatar") as HTMLInputElement;
@@ -127,7 +127,7 @@ export function callRegistrationEventListeners(game: GameInfo) {
 						alert("Registration failed. Please try again_am _here.");
 						return;
 					}
-					console.log("Registration successful:", response);
+					//console.log("Registration successful:", response);
 					alert("Registration successful! You can now log in.");
 					emptyLoginFields("registerSettings");
 					// hideGeneralRegistrationModal();

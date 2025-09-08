@@ -26,8 +26,8 @@ function mimicLogin(game: GameInfo) {
 
 export const render = (view: string, state: any, game: GameInfo) => {
 	if (game.remoteMode || game.localMode || game.multiplayerMode)
-		return ;
-	console.log("loading" + view + "...");
+		return;
+	//console.log("loading" + view + "...");
 	restoreScreen(game);
 
 	var stateTest = state?.view || null;
@@ -42,7 +42,7 @@ export const render = (view: string, state: any, game: GameInfo) => {
 			game.players = data.gameState.players;
 			game.currentlyLoggedIn = data.gameState.currentlyLoggedIn;
 		}
-		console.log(data?.info);
+		//console.log(data?.info);
 		switch (view) {
 			case game.availablePages[pageIndex.HOME]:
 				if (data && data.info === "loggedIn")

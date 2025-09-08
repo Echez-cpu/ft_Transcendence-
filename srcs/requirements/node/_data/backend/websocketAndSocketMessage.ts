@@ -9,7 +9,7 @@ export function websocketAndSocketMessage(app: FastifyInstance, db: any, game: G
 		if (!status) {
 			status = stmt2.get(message.from, message.target)?.status;
 		}
-		console.log(`Friend status between ${message.from} and ${message.target}: ${status}`);
+		//console.log(`Friend status between ${message.from} and ${message.target}: ${status}`);
 		if (targetSocket && status === 'accepted') {
 			targetSocket.send(JSON.stringify(message));
 		}
@@ -37,22 +37,22 @@ export function websocketAndSocketMessage(app: FastifyInstance, db: any, game: G
 	}
 
 	app.get('/ws', { websocket: true, preValidation: [app.authenticate] }, (socket, req: FastifyRequest) => { // login received
-		console.log('=== WebSocket Handler Called ===');
+		//console.log('=== WebSocket Handler Called ===');
 
 		// Extract username from query parameters
 		const { username } = req.query as { username: string };
-		console.log(`User connected: ${username || 'anonymous'}`);
+		//console.log(`User connected: ${username || 'anonymous'}`);
 
 		// Set up message handler
 		socket.on('message', (data) => {
-			console.log(`✅ Received from ${username}`);
+			//console.log(`✅ Received from ${username}`);
 			const strData = data.toString();
 			handleWebSocketMessageServer(strData);
 		});
 
 		// Handle connection close
 		socket.on('close', () => {
-			console.log(`User ${username} disconnected`);
+			//console.log(`User ${username} disconnected`);
 			const stmt2 = db.prepare(`UPDATE users SET status = 'offline' WHERE full_name = ?`);//TODO: I add the database changes here
 			stmt2.run(username);
 			game.sockets.delete(username);
@@ -61,10 +61,10 @@ export function websocketAndSocketMessage(app: FastifyInstance, db: any, game: G
 		game.sockets.set(username, socket);
 
 		// this is for debugging purposes
-		console.log(`----------------------------------------------------------`);
+		//console.log(`----------------------------------------------------------`);
 		for (const [key, value] of game.sockets.entries()) {
-			console.log(`Socket for ${key}: ${value}`);
+			//console.log(`Socket for ${key}: ${value}`);
 		}
-		console.log(`----------------------------------------------------------`);
+		//console.log(`----------------------------------------------------------`);
 	});
 }
