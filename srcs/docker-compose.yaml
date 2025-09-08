@@ -2,8 +2,8 @@ services:
   node:
     container_name: npm
     build: ./requirements/node/.
-    env_file:
-      - .env
+    #env_file:
+     # - .env
     volumes:
       - node_db:/app/data
     ports:

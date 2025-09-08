@@ -354,9 +354,9 @@ import { websocketAndSocketMessage } from './websocketAndSocketMessage.js';
 
 websocketAndSocketMessage(app, db, game);
 
-import { debugFunctions } from "./Debug.js";
+// import { debugFunctions } from "./Debug.js";
 
-debugFunctions(app, db);
+// debugFunctions(app, db);
 
 import { friendSystem } from './friendSystem.js';
 
