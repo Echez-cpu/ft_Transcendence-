@@ -117,7 +117,7 @@ await globalStatsRoutes(app);
 app.post("/register", async (request, reply) => {
 	const parts = request.parts();
 	let name = '', username = '', password = '', country = '';
-	let avatarPath = './avatars/default-avatar.png';
+	let avatarPath = '/avatars/default-avatar.png';
 	let avatarUploaded = false;
 
 	for await (const part of parts) {

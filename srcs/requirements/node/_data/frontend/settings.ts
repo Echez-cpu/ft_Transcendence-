@@ -254,17 +254,23 @@ export function callSettingsEventlisteners(game: GameInfo) {
 			navigate(game.availablePages[pageIndex.HOME], "loggedIn", game);
 			return;
 		}
+
+		if (passwordInput.value && !checkPassword(passwordInput.value.trim())) {
+			alert("Password must be at least 8 characters long and include at least one number, one uppercase letter, one lowercase letter, and one special character.");
+			navigate(game.availablePages[pageIndex.HOME], "loggedIn", game);
+			return;
+		}
+
 		if (avatarFileInput.files && avatarFileInput.files[0]) {
 			formData.append("avatar", avatarFileInput.files[0]); // new avatar
 		} else {
 			formData.append("avatar_url", game.userInfoTemp.avatar_url); // keep the one in DB
 		}
-		if (passwordInput.value.trim() ||
+		if (passwordInput.value.trim().length > 0 ||
 			game.userInfoTemp.Full_Name !== nameInput.value.trim() ||
-				game.userInfoTemp.Alias !== usernameInput.value.trim() ||
-					game.userInfoTemp.Country !== countryInput.value.trim() || 
-					game.userInfoTemp.avatar_url !== trimmedPath.trim())
-		{
+			game.userInfoTemp.Alias !== usernameInput.value.trim() ||
+			game.userInfoTemp.Country !== countryInput.value.trim() ||
+			game.userInfoTemp.avatar_url !== trimmedPath.trim()) {
 			logout(game);
 			fetch("/updateUser", {
 				method: "POST",

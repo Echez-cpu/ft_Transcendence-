@@ -29,7 +29,7 @@ export function hideGeneralRegistrationModal() {
 
 import { restoreScreenLoggedIn, restoreScreen } from "./screenDisplay.js";
 
-function checkPassword(password: string): boolean {
+export function checkPassword(password: string): boolean {
 	return password.length >= 8 && /\d/.test(password) && /[a-z]/.test(password) && /[A-Z]/.test(password) && /[!@#$%^&*(),.?":{}|<>]/.test(password);
 }
 
