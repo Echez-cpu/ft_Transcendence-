@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "ESnext",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "target": "esnext",
+    "outDir": "./data/public",
+    "rootDir": "./",
+    "alwaysStrict": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": false,
+    "types": ["node"]
+    // "typeRoots": ["./node_modules/@types"]
+  }
+}

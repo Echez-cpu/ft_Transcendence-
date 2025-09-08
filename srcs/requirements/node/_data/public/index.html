@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full m-0">
+
+<head>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Pong Game</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body id="gameScreen" class="min-h-full m-0 p-0 bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] bg-cover bg-fixed text-[#fefafa] font-montserrat">
+	<header>
+		<h1 id="maintitle" class="text-white font-bold tracking-[1px] [text-shadow:0px_2px_4px_rgba(0,0,0,0.5)] absolute z-[1] left-1/2 top-0 transform -translate-x-1/2 text-[42px] font-bold mb-8">
+			Pong Game
+		</h1>
+	</header>
+	<label for="gameScreen">
+		<div class="nav-container absolute top-[90px] left-0 right-0 z-[2] flex justify-around px-[40px]">
+			<div class="flex gap-[20px]">
+				<button id="loginButton" class="transform -translate-y-[2px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] relative py-[10px] px-[24px] bg-gradient-to-br from-[#4facfe] to-[#00f2fe] border-0 font-semibold text-white font-bold rounded mb-4">
+					Log in
+				</button>
+				<button id="logoutButton" class="transform -translate-y-[2px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] hidden relative py-[10px] px-[24px] mr-[30px] bg-gradient-to-br from-[#4facfe] to-[#00f2fe] border-0 font-semibold text-white font-bold rounded mb-4">
+					Log out
+				</button>
+				<button id="registerButton" class="transform -translate-y-[2px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] relative py-[10px] px-[24px] bg-gradient-to-br from-[#4facfe] to-[#00f2fe] border-0 font-semibold text-white font-bold rounded mb-4">
+					Register
+				</button>
+			</div>
+			<div class="flex gap-[20px]">
+				<button id="globalDashboardButton" class="transform -translate-y-[2px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] hidden py-[10px] px-[24px] bg-gradient-to-br from-[#4facfe] to-[#00f2fe] border-0 font-semibold text-white font-bold rounded mb-4">
+					Global Stats
+				</button>
+				<button id="dashboardButton" class="transform -translate-y-[2px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] hidden py-[10px] px-[24px] bg-gradient-to-br from-[#4facfe] to-[#00f2fe] border-0 font-semibold text-white font-bold rounded mb-4">
+					Dashboard
+				</button>
+				<select id="playSelect" class="hidden relative h-[44px] px-[24px] pr-[30px] bg-gradient-to-br from-[#4facfe] to-[#00f2fe] text-white text-base font-semibold border-0 appearance-none cursor-pointer rounded">
+					<option value="" disabled selected>Play</option>
+					<option value="tournament">Tournament</option>
+					<option value="multiplayer">Multiplayer</option>
+					<option value="1v1">1v1</option>
+				</select>
+			</div>
+		</div>
+		<button id="settingsButton" class="transform -translate-y-[2px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] absolute z-[2] right-[20px] top-[20px] flex items-center justify-center w-[50px] h-[50px] rounded-full text-[20px] bg-gradient-to-br from-[#4facfe] to-[#00f2fe] border-0 font-semibold text-white">
+			⚙️
+		</button>
+		<div id="WinnerScreen" class="hidden absolute top-[30%] left-1/2 transform -translate-x-1/2 bg-white/95 p-[30px] rounded-[16px] z-[10] shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-center">
+			<h2 id="WinnerScreenText" class="text-[#2c3e50] text-[28px] mb-5"></h2>
+			<button type="button" id="WinnerScreenContinue" class="transform -translate-y-[2px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] bg-gradient-to-br from-[#0061ff] to-[#60efff] border-0 font-semibold text-white px-6 py-3 rounded">
+				Continue
+			</button>
+		</div>
+	</label>
+
+	<settings-components></settings-components>
+	<registration-components></registration-components>
+	<login-components></login-components>
+	<tournament-components></tournament-components>
+	<two-player-match></two-player-match>
+	<multiplayer-match></multiplayer-match>
+
+	<div class="absolute left-1/2 top-[140px] transform -translate-x-1/2 p-[20px] bg-white/10 backdrop-blur-md rounded-[16px] border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1)]">
+		<canvas tabindex="1" id="gameCanvas" class="relative border-2 border-white/30 rounded-[16px] shadow-[0_12px_32px_rgba(0,0,0,0.3)]"></canvas>
+	</div>
+
+	<friend-components></friend-components>
+	
+	<div id="dashboardView" class="hidden absolute top-[160px] left-1/2 transform -translate-x-1/2 bg-white/95 text-[#2c3e50] p-[30px] rounded-[16px] w-[80%] max-w-[1000px] max-h-[600px] overflow-y-auto z-[5] shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+		<h2 class="text-center font-bold text-[28px] mb-[20px] text-[#2c3e50]">
+			Your Dashboard
+		</h2>
+		<div class="grid grid-cols-2 gap-[20px] mb-[20px]">
+			<div class="bg-white/80 p-[20px] rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+				<h3 class="mt-0 mb-[15px] text-[18px]">Match Results</h3>
+				<canvas id="matchPieChart" class="w-full max-h-[250px]"></canvas>
+			</div>
+			<div class="bg-white/80 p-[20px] rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+				<h3 class="mt-0 mb-[15px] text-[18px]">Performance</h3>
+				<canvas id="matchBarChart" class="w-full max-h-[250px]"></canvas>
+			</div>
+		</div>
+		<div class="bg-white/80 p-[20px] rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+			<h3 class="mt-0 mb-[15px] text-[18px]">Recent Matches</h3>
+			<ul id="dashboardMatchHistoryList" class="max-h-[200px] overflow-y-auto pl-0 list-none"></ul>
+		</div>
+
+		<button id="closeDashboard" class="transform -translate-y-[2px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] bg-gradient-to-br from-[#0061ff] to-[#60efff] font-semibold text-white px-6 py-3 rounded mt-4 block mx-auto text-[16px]">
+			Close
+		</button>
+	</div>
+
+
+	<div id="globalDashboardView" class="hidden absolute top-[160px] left-1/2 transform -translate-x-1/2 bg-white/95 text-[#2c3e50] p-[30px] rounded-[16px] w-[80%] max-w-[1000px] max-h-[600px] overflow-y-auto z-[5] shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+		<h2 class="text-center font-bold text-[28px] mb-[20px] text-[#2c3e50]">
+			Global Game Stats
+		</h2>
+		<div class="bg-white/80 p-[20px] rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] mb-[20px]">
+			<h3 class="mt-0 mb-[15px] text-[18px]">Game Activity</h3>
+			<canvas id="globalMatchTypeChart" class="w-full max-h-[250px]"></canvas>
+		</div>
+		<div class="bg-white/80 p-[20px] rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] mb-[20px]">
+			<h3 class="mt-0 mb-[15px] text-[18px]">Leaderboard</h3>
+			<div class="max-h-[200px] overflow-y-auto">
+				<table id="leaderboardTable" class="w-full border-collapse text-left"></table>
+			</div>
+		</div>
+		<div class="bg-white/80 p-[20px] rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+			<h3 class="mt-0 mb-[15px] text-[18px]">Recent Matches</h3>
+			<ul id="globalRecentMatches" class="max-h-[200px] overflow-y-auto pl-0 list-none"></ul>
+		</div>
+		<button id="closeGlobalDashboard" class="transform -translate-y-[2px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] bg-gradient-to-br from-[#0061ff] to-[#60efff] font-semibold text-white px-6 py-3 rounded mt-4 block mx-auto text-[16px]">
+			Close
+		</button>
+	</div>
+	<div id="matchHistory" class="hidden absolute top-[calc(140px+620px+70px)] left-1/2 transform -translate-x-1/2 p-[25px] w-[940px] bg-white/10 backdrop-blur-md rounded-[16px] border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1)]">
+		<h2 class="mt-0 text-white font-semibold text-[24px] mb-[15px] text-center">
+			Match History
+		</h2>
+		<div class="rounded-[8px] overflow-hidden">
+			<ul id="matchHistoryList" class="w-full max-h-[250px] overflow-y-auto bg-black/40 mx-auto p-5 list-none rounded-[8px]">
+				<li class="p-[12px] text-center text-white/70 border-b border-white/10">
+					Your match history will appear here.
+				</li>
+			</ul>
+		</div>
+	</div>
+	<script type="module" src="/index.js"></script>
+</body>
+
+</html>
+
+<!-- buttons etc overlap when resizing window -->
