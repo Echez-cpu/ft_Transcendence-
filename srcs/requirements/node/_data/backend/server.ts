@@ -28,7 +28,7 @@ export const app = fastify({
 await app.register(websocket);
 await app.register(fastifyMultipart);
 await app.register(fastifyJwt, {
-	secret: process.env.JWT_SECRET || "Marlon, Patrick, Yao",
+	secret: process.env.JWT_SECRET || "",
 	cookie: {
 		cookieName: "token",   // <-- Name of the cookie
 		signed: false          // We are not signing cookies separately
